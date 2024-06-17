@@ -29,7 +29,12 @@ namespace CodeBase.Logic.EnemySpawners
         _enemyDeath.Happened -= Slay;
     }
 
-    public void LoadProgress(PlayerProgress progress)
+        private void Start()
+        {
+            Spawn();
+        }
+
+        public void LoadProgress(PlayerProgress progress)
     {
       if (progress.KillData.ClearedSpawners.Contains(Id))
         _slain = true;

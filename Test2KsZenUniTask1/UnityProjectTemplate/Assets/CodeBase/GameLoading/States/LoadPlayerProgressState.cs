@@ -14,65 +14,67 @@ namespace CodeBase.GameLoading.States
 {
     public class LoadPlayerProgressState : IState
     {
-        private readonly SceneStateMachine sceneStateMachine;
-        private readonly ISaveLoadService saveLoadService;
-        private readonly IEnumerable<IProgressReader> progressReaderServices;
-        private readonly IPersistentProgressService progressService;
-        private readonly IAwaitingOverlay awaitingOverlay;
-        private readonly ILogService log;
+        private readonly SceneStateMachine _sceneStateMachine;
+        private readonly ISaveLoadService _saveLoadService;
+        private readonly IEnumerable<IProgressReader> _progressReaderServices;
+        private readonly IPersistentProgressService _progressService;
+        private readonly IAwaitingOverlay _awaitingOverlay;
+        private readonly ILogService _log;
 
         public LoadPlayerProgressState(SceneStateMachine sceneStateMachine, IPersistentProgressService progressService, ISaveLoadService saveLoadService, IEnumerable<IProgressReader> progressReaderServices, IAwaitingOverlay awaitingOverlay, ILogService log)
         {
-            this.sceneStateMachine = sceneStateMachine;
-            this.saveLoadService = saveLoadService;
-            this.progressService = progressService;
-            this.progressReaderServices = progressReaderServices;
-            this.awaitingOverlay = awaitingOverlay;
-            this.log = log;
+            _sceneStateMachine = sceneStateMachine;
+            _saveLoadService = saveLoadService;
+            _progressService = progressService;
+            _progressReaderServices = progressReaderServices;
+            _awaitingOverlay = awaitingOverlay;
+            _log = log;
         }
 
         public async UniTask Enter()
         {
-            log.Log("LoadPlayerProgressState enter");
+            _log.Log("LoadPlayerProgressState enter");
             
-            awaitingOverlay.Show("Loading player progress...");
-            
+            _awaitingOverlay.Show("Loading player progress...");
+
             var progress = LoadProgressOrInitNew();
-            
+            _saveLoadService.SaveProgress();
             NotifyProgressReaderServices(progress);
 
-            await UniTask.WaitForSeconds(1f); // just for demonstrate concept with overlay. You can remove it. 
-            awaitingOverlay.Hide();
+            await UniTask.WaitForSeconds(1f); 
+            _awaitingOverlay.Hide();
             
-            sceneStateMachine.Enter<PrivatePolicyState>().Forget();
+            _sceneStateMachine.Enter<PrivatePolicyState>().Forget();
+           
         }
+
+       
 
         private void NotifyProgressReaderServices(PlayerProgress progress)
         {
-            foreach (var reader in progressReaderServices)
+            foreach (var reader in _progressReaderServices)
                 reader.LoadProgress(progress);
         }
 
         public UniTask Exit()
         {
-            log.Log("LoadPlayerProgressState exit");
+            _log.Log("LoadPlayerProgressState exit");
             return default;
         }
 
         private PlayerProgress LoadProgressOrInitNew()
         {
-            progressService.Progress = 
-                saveLoadService.LoadProgress() 
+            _progressService.Progress = 
+                _saveLoadService.LoadProgress() 
                 ?? NewProgress();
-            return progressService.Progress;
+            return _progressService.Progress;
         }
 
         private PlayerProgress NewProgress()
         {
-            var progress =  new PlayerProgress(InfrastructureAssetPath.GameMode1Scene);
+            var progress =  new PlayerProgress(InfrastructureAssetPath.GameLoadingScene);
 
-            log.Log("Init new player progress");
-            // init start state of progress here
+            Debug.Log("Init new player progress");
             
             progress.HeroState.MaxHP = 50;
            

@@ -7,20 +7,20 @@ namespace CodeBase.GameLoading.States
 {
     public class FinishGameLoadingState : IState
     {
-        private readonly GameStateMachine gameStateMachine;
-        private readonly ILogService log;
+        private readonly GameStateMachine _gameStateMachine;
+        private readonly ILogService _log;
 
         public FinishGameLoadingState(GameStateMachine gameStateMachine, ILogService log)
         {
-            this.gameStateMachine = gameStateMachine;
-            this.log = log;
+            _gameStateMachine = gameStateMachine;
+            _log = log;
         }
 
         public async UniTask Enter()
         {
-            log.Log("FinishGameLoadingState enter");
+            _log.Log("FinishGameLoadingState enter");
             
-            gameStateMachine.Enter<GameHubState>().Forget();
+            _gameStateMachine.Enter<GameHubState>().Forget();
         }
 
         public UniTask Exit() => 

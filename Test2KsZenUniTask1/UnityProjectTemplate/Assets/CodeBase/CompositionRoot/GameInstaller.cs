@@ -4,6 +4,7 @@ using CodeBase.Infrastructure.Factories;
 using CodeBase.Infrastructure.SceneManagement;
 using CodeBase.Infrastructure.States;
 using CodeBase.Infrastructure.UI.LoadingCurtain;
+using CodeBase.Logic;
 using CodeBase.Services.AdsService;
 using CodeBase.Services.AnalyticsService;
 using CodeBase.Services.InputService;
@@ -18,12 +19,16 @@ using CodeBase.Services.WalletService;
 using CodeBase.UI.Overlays;
 using CodeBase.UI.Services.Factories;
 using Cysharp.Threading.Tasks;
+using System;
+using UnityEngine;
 using Zenject;
 
 namespace CodeBase.CompositionRoot
 {
     public class GameInstaller : MonoInstaller
     {
+        [SerializeField] private SaveTrigger _saveTrigger;
+
         public override void InstallBindings()
         {
             BindGameBootstraperFactory();
@@ -61,7 +66,6 @@ namespace CodeBase.CompositionRoot
             BindAssetProvider();
 
             BindWalletService();
-            //Container.Bind<State>().AsSingle();
         }
 
         private void BindWalletService() => 
@@ -102,7 +106,7 @@ namespace CodeBase.CompositionRoot
         {
             Container
                 .BindInterfacesAndSelfTo<SaveLoadService>()
-                .AsSingle();
+                .AsSingle().NonLazy();
         }
 
         private void BindPlayerProgressService()
@@ -122,6 +126,11 @@ namespace CodeBase.CompositionRoot
                 .FromSubContainerResolve()
                 .ByInstaller<GameFactoryInstaller>()
                 .AsSingle();
+        }
+
+        private void BindHero()
+        {
+            Container.Bind<ISaveLoadService>().FromSubContainerResolve().ByInstaller<HeroInstaller>().AsSingle();
         }
 
         private void BindUIFactory()

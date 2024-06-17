@@ -1,6 +1,7 @@
 ﻿using Codebase.Gameplay.Hero;
 using CodeBase.Enemy;
 using CodeBase.Infrastructure.AssetManagement;
+using CodeBase.Logic.EnemySpawners;
 using CodeBase.Services.SaveLoadService;
 using CodeBase.Services.StaticDataService;
 using CodeBase.StaticData;
@@ -26,16 +27,18 @@ namespace CodeBase.Infrastructure.Factories
         private readonly Hero.Factory _heroFactory;
         private readonly IAssetProvider _assets;
         private readonly IStaticDataService _staticData;
+        private ISaveLoadService _saveLoad;
         private GameObject _heroGameObject;
 
 
-        public GameFactory(HUDRoot.Factory hudFactory, Money.Factory moneyFactory/*, Hero.Factory heroFactory*/, IAssetProvider assetProvider, IStaticDataService staticDataService)
+        public GameFactory(HUDRoot.Factory hudFactory, Money.Factory moneyFactory/*, Hero.Factory heroFactory*/, IAssetProvider assetProvider, IStaticDataService staticDataService, ISaveLoadService saveLoadService)
         {
             this.hudFactory = hudFactory;
             _moneyFactory = moneyFactory;
             //_heroFactory = heroFactory;
             _assets = assetProvider;
             _staticData = staticDataService;
+            _saveLoad = saveLoadService;
         }
        
 
@@ -43,8 +46,11 @@ namespace CodeBase.Infrastructure.Factories
         public IMoney CreateMoney() => _moneyFactory.Create();
         //public IHero CreateHero() => _heroFactory.Create();
 
-      public async Cysharp.Threading.Tasks.UniTask<GameObject> CreateHero(Vector3 at) => 
-            _heroGameObject = await _assets.Instantiate(InfrastructureAssetPath.Hero, at);
+        public async Cysharp.Threading.Tasks.UniTask<GameObject> CreateHero(Vector3 at)
+        {
+            return _heroGameObject = await _assets.Instantiate(InfrastructureAssetPath.Hero, at);
+            _saveLoad.SaveProgress();
+        }
 
         public async UniTask<GameObject> CreateEnemy(EnemyTypeId typeId, Transform parent)
         {
@@ -67,6 +73,21 @@ namespace CodeBase.Infrastructure.Factories
             Debug.Log("CreateEnemy");
             return enemy;
         }
+
+        public async UniTask CreateSpawner(string spawnerId, Vector3 at, EnemyTypeId monsterTypeId)
+        {
+            GameObject prefab = await _assets.Load<GameObject>(AssetLabels.Spawner);
+
+            SpawnPoint spawner = Object.Instantiate(prefab, at, Quaternion.identity).GetComponent<SpawnPoint>();
+
+            spawner.Construct(this);
+            spawner.MonsterTypeId = monsterTypeId;
+            spawner.Id = spawnerId;
+        }
+
+        
+
+
         public void Cleanup()
         {
             

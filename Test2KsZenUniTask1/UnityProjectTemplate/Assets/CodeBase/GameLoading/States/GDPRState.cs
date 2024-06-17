@@ -12,41 +12,41 @@ namespace CodeBase.GameLoading.States
 {
     public class GDPRState : IState
     {
-        private readonly IPopUpService popUpService;
-        private readonly SceneStateMachine sceneStateMachine;
-        private readonly IPersistentProgressService progressService;
-        private readonly ILogService log;
-        private readonly IStaticDataService staticDataService;
+        private readonly IPopUpService _popUpService;
+        private readonly SceneStateMachine _sceneStateMachine;
+        private readonly IPersistentProgressService _progressService;
+        private readonly ILogService _log;
+        private readonly IStaticDataService _staticDataService;
 
         public GDPRState(IPopUpService popUpService, IStaticDataService staticDataService, SceneStateMachine sceneStateMachine, IPersistentProgressService progressService, ILogService log)
         {
-            this.popUpService = popUpService;
-            this.sceneStateMachine = sceneStateMachine;
-            this.progressService = progressService;
-            this.log = log;
-            this.staticDataService = staticDataService;
+            _popUpService = popUpService;
+            _sceneStateMachine = sceneStateMachine;
+            _progressService = progressService;
+            _log = log;
+            _staticDataService = staticDataService;
         }
 
         public async UniTask Enter()
         {
-            log.Log("GDPRState enter");
+            _log.Log("GDPRState enter");
 
-            if(!progressService.Progress.GDPRPolicyAccepted)
+            if(!_progressService.Progress.GDPRPolicyAccepted)
                 await AskToAcceptGDPRPolicy();
             
-            if (progressService.Progress.GDPRPolicyAccepted)
-                sceneStateMachine.Enter<FinishGameLoadingState>().Forget();
+            if (_progressService.Progress.GDPRPolicyAccepted)
+                _sceneStateMachine.Enter<FinishGameLoadingState>().Forget();
             else
-                log.Log("Player cant play our game due to reject gdpr policy :)");
+                _log.Log("Player cant play our game due to reject gdpr policy :)");
         }
 
         private async Task AskToAcceptGDPRPolicy()
         {
-            var popupConfig = staticDataService.GetPolicyAcceptPopupConfig(PolicyAcceptPopupTypes.GDPR);
+            var popupConfig = _staticDataService.GetPolicyAcceptPopupConfig(PolicyAcceptPopupTypes.GDPR);
             
-            bool result = await popUpService.AskPolicyPopup(popupConfig);
+            bool result = await _popUpService.AskPolicyPopup(popupConfig);
 
-            progressService.Progress.GDPRPolicyAccepted = result;
+            _progressService.Progress.GDPRPolicyAccepted = result;
         }
 
         public UniTask Exit() => default;

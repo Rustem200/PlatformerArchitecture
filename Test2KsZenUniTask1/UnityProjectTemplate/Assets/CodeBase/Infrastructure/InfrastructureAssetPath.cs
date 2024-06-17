@@ -12,5 +12,6 @@
         public const string Money = "Infrastructure/Money";
         public const string GameBootstraper = "Infrastructure/Game Bootstraper";
         public const string Hero = "Prefabs/Hero";
+        public const string SaveTrigger = "Prefabs/SaveTrigger";
     }
 }

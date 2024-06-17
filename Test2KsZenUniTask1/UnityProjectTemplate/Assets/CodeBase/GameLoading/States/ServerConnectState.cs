@@ -11,38 +11,38 @@ namespace CodeBase.GameLoading.States
 {
     public class ServerConnectState : IState
     {
-        private readonly IServerConnectionService serverConnectionService;
-        private readonly IStaticDataService staticDataService;
-        private readonly SceneStateMachine sceneStateMachine;
-        private readonly IAwaitingOverlay awaitingOverlay;
-        private readonly IPopUpService popUpService;
-        private readonly ILogService log;
+        private readonly IServerConnectionService _serverConnectionService;
+        private readonly IStaticDataService _staticDataService;
+        private readonly SceneStateMachine _sceneStateMachine;
+        private readonly IAwaitingOverlay _awaitingOverlay;
+        private readonly IPopUpService _popUpService;
+        private readonly ILogService _log;
 
         public ServerConnectState(IServerConnectionService serverConnectionService, IStaticDataService staticDataService, SceneStateMachine sceneStateMachine, IAwaitingOverlay awaitingOverlay, IPopUpService popUpService, ILogService log)
         {
-            this.serverConnectionService = serverConnectionService;
-            this.staticDataService = staticDataService;
-            this.sceneStateMachine = sceneStateMachine;
-            this.awaitingOverlay = awaitingOverlay;
-            this.popUpService = popUpService;
-            this.log = log;
+            _serverConnectionService = serverConnectionService;
+            _staticDataService = staticDataService;
+            _sceneStateMachine = sceneStateMachine;
+            _awaitingOverlay = awaitingOverlay;
+            _popUpService = popUpService;
+            _log = log;
         }
 
         public async UniTask Enter()
         {
-            log.Log("ServerConnectState enter");
-            awaitingOverlay.Show("Connection to server...");
+            _log.Log("ServerConnectState enter");
+            _awaitingOverlay.Show("Connection to server...");
             
-            ConnectionResult result = await serverConnectionService.Connect(staticDataService.ServerConnectionConfig);
+            ConnectionResult result = await _serverConnectionService.Connect(_staticDataService.ServerConnectionConfig);
             
-            awaitingOverlay.Hide();
+            _awaitingOverlay.Hide();
             
             if(result == ConnectionResult.Success)
-                sceneStateMachine.Enter<LoadPlayerProgressState>().Forget();
+                _sceneStateMachine.Enter<LoadPlayerProgressState>().Forget();
             else
             {
                 // some works on connection error for example repeat
-                await popUpService.ShowError("Connection error",
+                await _popUpService.ShowError("Connection error",
                     "Can't connect to server. Please check your internet connection.");
             }
         }

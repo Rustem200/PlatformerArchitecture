@@ -1,5 +1,6 @@
 using Codebase.Gameplay.Hero;
 using CodeBase.Infrastructure.AssetManagement;
+using CodeBase.Services.SaveLoadService;
 using CodeBase.Services.StaticDataService;
 using CodeBase.UI.HUD;
 using Zenject;
@@ -16,7 +17,8 @@ namespace CodeBase.Infrastructure.Factories
             //Container.BindFactory<Hero, Hero.Factory>().FromComponentInNewPrefabResource(InfrastructureAssetPath.Hero);
             Container.Bind<AssetProvider>().AsCached();
             Container.Bind<StaticDataService>().AsSingle();
-        
+            Container.Bind<SaveLoadService>().AsSingle(); 
+
             Container.Bind<IGameFactory>().To<GameFactory>().AsSingle();
         }
     }

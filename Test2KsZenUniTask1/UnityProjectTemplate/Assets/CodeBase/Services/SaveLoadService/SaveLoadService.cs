@@ -28,6 +28,7 @@ namespace CodeBase.Services.SaveLoadService
                 saver.UpdateProgress(persistentProgressService.Progress);
 
             PlayerPrefs.SetString(ProgressKey, persistentProgressService.Progress.ToJson());
+            Debug.Log("sACEW");
         }
 
         public PlayerProgress LoadProgress() =>

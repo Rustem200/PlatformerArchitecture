@@ -77,7 +77,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f7b60522a0a5c404abb7ee089f975b4b
-    m_Address: Assets/Resources_moved/Prefabs/SpawnPoint.prefab
+    m_Address: SpawnPoint
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

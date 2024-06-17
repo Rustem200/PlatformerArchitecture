@@ -7,5 +7,6 @@ namespace CodeBase.Infrastructure.AssetManagement
         public const string LoadProgressState = "LoadProgressState";
         public const string GameHubState = "GameHubState";
         public const string GameplayState = "GameplayState";
+        public const string Spawner = "SpawnPoint";
     }
 }

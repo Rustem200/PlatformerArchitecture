@@ -8,31 +8,31 @@ namespace CodeBase.GameLoading
 {
     public class GameLoadingSceneBootstraper : IInitializable
     {
-        private readonly SceneStateMachine sceneStateMachine;
-        private readonly StatesFactory statesFactory;
-        private readonly ILogService log;
+        private readonly SceneStateMachine _sceneStateMachine;
+        private readonly StatesFactory _statesFactory;
+        private readonly ILogService _log;
 
         public GameLoadingSceneBootstraper(SceneStateMachine sceneStateMachine, StatesFactory statesFactory, ILogService log)
         {
-            this.sceneStateMachine = sceneStateMachine;
-            this.statesFactory = statesFactory;
-            this.log = log;
+            _sceneStateMachine = sceneStateMachine;
+            _statesFactory = statesFactory;
+            _log = log;
         }
 
         public void Initialize()
         {
-            log.Log("Start loading scene bootstraping");
+            _log.Log("Start loading scene bootstraping");
 
-            sceneStateMachine.RegisterState(statesFactory.Create<ServerConnectState>());
-            sceneStateMachine.RegisterState(statesFactory.Create<LoadPlayerProgressState>());
-            sceneStateMachine.RegisterState(statesFactory.Create<PrivatePolicyState>());
-            sceneStateMachine.RegisterState(statesFactory.Create<GDPRState>());
-            sceneStateMachine.RegisterState(statesFactory.Create<FinishGameLoadingState>());
+            _sceneStateMachine.RegisterState(_statesFactory.Create<ServerConnectState>());
+            _sceneStateMachine.RegisterState(_statesFactory.Create<LoadPlayerProgressState>());
+            _sceneStateMachine.RegisterState(_statesFactory.Create<PrivatePolicyState>());
+            _sceneStateMachine.RegisterState(_statesFactory.Create<GDPRState>());
+            _sceneStateMachine.RegisterState(_statesFactory.Create<FinishGameLoadingState>());
 
-            log.Log("Finish loading scene bootstraping");
+            _log.Log("Finish loading scene bootstraping");
             
             // go to the first scene state
-            sceneStateMachine.Enter<ServerConnectState>();
+            _sceneStateMachine.Enter<ServerConnectState>();
         }
     }
 }

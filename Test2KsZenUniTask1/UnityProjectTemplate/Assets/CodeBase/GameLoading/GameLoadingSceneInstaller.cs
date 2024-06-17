@@ -9,10 +9,6 @@ namespace CodeBase.GameLoading
 {
     public class GameLoadingSceneInstaller : MonoInstaller
     {
-        // Here we bind dependencies that make sense only in loading scene.
-        // If we need some dependencies from scene for our game mode
-        // we can link it on scene right here for binding and use it in scene context
-
         public override void InstallBindings()
         {
             Debug.Log("Start loading scene installer");
@@ -24,23 +20,6 @@ namespace CodeBase.GameLoading
             Container.Bind<SceneStateMachine>().AsSingle();
             
             UIInstaller.Install(Container);
-
-            //BindPopupConfigs();
         }
-
-        /*private void BindPopupConfigs()
-        {
-            Container
-                .Bind<PolicyAcceptPopupConfig>()
-                .FromScriptableObjectResource("Configs/UI/PolicyPopups/PrivatePolicy")
-                .AsTransient()
-                .WhenInjectedInto<PrivatePolicyState>();
-
-            Container
-                .Bind<PolicyAcceptPopupConfig>()
-                .FromScriptableObjectResource("Configs/UI/PolicyPopups/GDPRPolicy")
-                .AsTransient()
-                .WhenInjectedInto<GDPRState>();
-        }*/
     }
 }

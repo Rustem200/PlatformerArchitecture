@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: GamePlay1
   m_EditorClassIdentifier: 
   LevelKey: GameMode1
+  EnemySpawners:
+  - Id: GameMode1_63cd72a8-b133-49bf-a27b-1a890bbd63ba
+    MonsterTypeId: 1
+    Position: {x: 50, y: 5, z: -15}
   InitialHeroPosition: {x: 42.36, y: 5.236092, z: -14.92533}

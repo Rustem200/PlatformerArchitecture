@@ -1,15 +1,11 @@
 using CodeBase.Data;
 using CodeBase.Services.PlayerProgressService;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
-public class HeroHealth : MonoBehaviour, IHealth, IProgressSaver
+public class HeroHealth : MonoBehaviour, IHealth, IProgressSaver, IProgressReader
 {
-    private State _state = new State();
-    //[SerializeField] private float _health;
+    private State _state;
     public event Action HealthChanged;
 
     public float Current
@@ -28,7 +24,7 @@ public class HeroHealth : MonoBehaviour, IHealth, IProgressSaver
 
     public float Max
     {
-        get => _state.MaxHP;
+        get => _state.CurrentHP;
         set => _state.MaxHP = value;
     }
 
@@ -47,21 +43,9 @@ public class HeroHealth : MonoBehaviour, IHealth, IProgressSaver
 
     public void TakeDamage(float damage)
     {
-        /*if (Current <= 0)
-            return;*/
-        if (_state == null)
-            Debug.Log("nulllll");
+        if (Current <= 0)
+            return;
 
         Current -= damage;
-        Debug.Log(Current);
-        //Animator.PlayHit();
     }
-}
-
-public interface IHealth : IProgressSaver
-{
-    event Action HealthChanged;
-    float Current { get; set; }
-    float Max { get; set; }
-    void TakeDamage(float damage);
 }

@@ -20,5 +20,6 @@ namespace CodeBase.Infrastructure.Factories
         public Cysharp.Threading.Tasks.UniTask<GameObject> CreateHero(Vector3 at);
         void Cleanup();
         UniTask<GameObject> CreateEnemy(EnemyTypeId typeId, Transform parent);
+        UniTask CreateSpawner(string spawnerId, Vector3 at, EnemyTypeId monsterTypeId);
     }
 }

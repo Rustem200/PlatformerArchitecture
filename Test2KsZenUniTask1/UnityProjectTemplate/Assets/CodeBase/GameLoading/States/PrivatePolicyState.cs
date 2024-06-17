@@ -12,41 +12,41 @@ namespace CodeBase.GameLoading.States
 {
     public class PrivatePolicyState : IState
     {
-        private readonly IPopUpService popUpService;
-        private readonly SceneStateMachine sceneStateMachine;
-        private readonly IPersistentProgressService progressService;
-        private readonly ILogService log;
-        private readonly IStaticDataService staticData;
+        private readonly IPopUpService _popUpService;
+        private readonly SceneStateMachine _sceneStateMachine;
+        private readonly IPersistentProgressService _progressService;
+        private readonly ILogService _log;
+        private readonly IStaticDataService _staticData;
 
         public PrivatePolicyState(IPopUpService popUpService, IStaticDataService staticData, SceneStateMachine sceneStateMachine, IPersistentProgressService progressService, ILogService log)
         {
-            this.popUpService = popUpService;
-            this.sceneStateMachine = sceneStateMachine;
-            this.progressService = progressService;
-            this.log = log;
-            this.staticData = staticData;
+            _popUpService = popUpService;
+            _sceneStateMachine = sceneStateMachine;
+            _progressService = progressService;
+            _log = log;
+            _staticData = staticData;
         }
 
         public async UniTask Enter()
         {
-            log.Log("PrivatePolicyState enter");
+            _log.Log("PrivatePolicyState enter");
             
-            if (!progressService.Progress.PrivatePolicyAccepted) 
+            if (!_progressService.Progress.PrivatePolicyAccepted) 
                 await AskToAcceptPrivatePolicy();
             
-            if (progressService.Progress.PrivatePolicyAccepted)
-                sceneStateMachine.Enter<GDPRState>().Forget();
+            if (_progressService.Progress.PrivatePolicyAccepted)
+                _sceneStateMachine.Enter<GDPRState>().Forget();
             else
-                log.Log("Player cant play our game due to somehow reject private policy :)");
+                _log.Log("Player cant play our game due to somehow reject private policy :)");
         }
 
         private async Task AskToAcceptPrivatePolicy()
         {
-            var popupConfig = staticData.GetPolicyAcceptPopupConfig(PolicyAcceptPopupTypes.PrivatePolicy);
+            var popupConfig = _staticData.GetPolicyAcceptPopupConfig(PolicyAcceptPopupTypes.PrivatePolicy);
             
-            bool result = await popUpService.AskPolicyPopup(popupConfig);
+            bool result = await _popUpService.AskPolicyPopup(popupConfig);
             
-            progressService.Progress.PrivatePolicyAccepted = result;
+            _progressService.Progress.PrivatePolicyAccepted = result;
         }
 
         public UniTask Exit() => default;

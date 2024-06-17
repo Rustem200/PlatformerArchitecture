@@ -16,54 +16,58 @@ namespace CodeBase.Infrastructure.States
 {
     public class GameplayState : IState
     {
-        private readonly ILoadingCurtain loadingCurtain;
-        private readonly ISceneLoader sceneLoader;
-        private ILogService log;
-        private IAssetProvider assetProvider;
+        private readonly ILoadingCurtain _loadingCurtain;
+        private readonly ISceneLoader _sceneLoader;
+        private ILogService _log;
+        private IAssetProvider _assetProvider;
         private IStaticDataService _staticData;
         private readonly IPersistentProgressService _progressService;
+        private ISaveLoadService _saveLoad;
         [Inject] private readonly IGameFactory gameFactory;
 
-        public GameplayState(ILoadingCurtain loadingCurtain, ISceneLoader sceneLoader, ILogService log, IAssetProvider assetProvider, StaticDataService staticDataService, IPersistentProgressService progressService)
+        public GameplayState(ILoadingCurtain loadingCurtain, ISceneLoader sceneLoader, ILogService log, IAssetProvider assetProvider, StaticDataService staticDataService, IPersistentProgressService progressService, ISaveLoadService saveLoadService)
         {
-            this.loadingCurtain = loadingCurtain;
-            this.sceneLoader = sceneLoader;
-            this.log = log;
-            this.assetProvider = assetProvider;
+            _loadingCurtain = loadingCurtain;
+            _sceneLoader = sceneLoader;
+            _log = log;
+            _assetProvider = assetProvider;
             _staticData = staticDataService;
             _progressService = progressService;
-            if (_staticData == null)
-                Debug.Log("7777777777777");
+            _saveLoad = saveLoadService;
         }
 
         public async UniTask Enter()
         {
-            log.Log("Game mode 1 state enter");
-            loadingCurtain.Show();
-            await assetProvider.WarmupAssetsByLabel(AssetLabels.GameplayState);
-            await sceneLoader.Load(InfrastructureAssetPath.GameMode1Scene);
-            loadingCurtain.Hide();
-            //gameFactory.CreateMoney();
+            _log.Log("Game mode 1 state enter");
+            _loadingCurtain.Show();
+
+            await _assetProvider.WarmupAssetsByLabel(AssetLabels.GameplayState);
+            await _sceneLoader.Load(InfrastructureAssetPath.GameMode1Scene);
+
+            _loadingCurtain.Hide();
+
             LevelStaticData levelData = LevelStaticData();
             GameObject hero = await gameFactory.CreateHero(levelData.InitialHeroPosition);
-            await gameFactory.CreateEnemy(EnemyTypeId.Evrey, hero.transform);
-            //InformProgressReaders();
+
+            _saveLoad.SaveProgress();
+            await InitSpawners(levelData);
             
+        }
+
+
+        private async UniTask InitSpawners(LevelStaticData levelStaticData)
+        {
+            foreach (EnemySpawnerStaticData spawnerData in levelStaticData.EnemySpawners)
+                await gameFactory.CreateSpawner(spawnerData.Id, spawnerData.Position, spawnerData.MonsterTypeId);
         }
 
         private LevelStaticData LevelStaticData() =>
      _staticData.ForLevel(SceneManager.GetActiveScene().name);
 
-       /* private void InformProgressReaders()
-        {
-            foreach (ISavedProgressReader progressReader in gameFactory.ProgressReaders)
-                progressReader.LoadProgress(_progressService.Progress);
-        }*/
-
         public async UniTask Exit()
         {
-            loadingCurtain.Show();
-            await assetProvider.ReleaseAssetsByLabel(AssetLabels.GameplayState);
+            _loadingCurtain.Show();
+            await _assetProvider.ReleaseAssetsByLabel(AssetLabels.GameplayState);
         }
     }
 }
